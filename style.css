@@ -1,0 +1,60 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #fff; -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
+
+/* Home Grid Spacing */
+.magazine-card { cursor: pointer; border-radius: 6px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.06); transition: 0.3s; }
+.magazine-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; }
+
+/* 3D Master Engine */
+#flipbook-wrapper {
+    width: 100%;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    /* Allows the 'swing' of the page turn to be visible */
+    overflow: visible !important; 
+}
+
+#magazine { 
+    width: 100%; height: 100%; margin: auto; 
+    max-height: 82vh; 
+    perspective: 3500px;
+    /* Lift the book toward the user so it doesn't clip with background */
+    transform: translateZ(50px);
+    -webkit-transform: translateZ(50px);
+    overflow: visible !important;
+}
+
+@media (min-width: 768px) { #magazine { aspect-ratio: 2008 / 1358; } }
+@media (max-width: 767px) { #magazine { aspect-ratio: 1004 / 1358; } }
+
+.page { 
+    background: #fff; width: 100%; height: 100%; 
+    overflow: visible !important; 
+    position: relative;
+    /* FIX: Prevents images from disappearing during turn */
+    transform-style: preserve-3d !important;
+    backface-visibility: visible !important;
+    -webkit-backface-visibility: visible !important;
+}
+
+.page img { 
+    width: 100%; height: 100%; object-fit: contain; display: block; 
+    /* Force GPU to keep the image 'glued' to the top side of the page */
+    transform: translateZ(5px);
+    -webkit-transform: translateZ(5px);
+    pointer-events: none;
+}
+
+/* UI Logic */
+#btn-prev, #btn-next, #close-flipbook {
+    cursor: pointer !important;
+    pointer-events: auto !important;
+}
+
+/* Depth Spine Shadows */
+.page::after { content: ""; position: absolute; top: 0; width: 40px; height: 100%; pointer-events: none; z-index: 10; }
+.page:nth-child(even)::after { left: 0; background: linear-gradient(to right, rgba(0,0,0,0.12) 0%, transparent 100%); }
+.page:nth-child(odd)::after { right: 0; background: linear-gradient(to left, rgba(0,0,0,0.12) 0%, transparent 100%); }
