@@ -72,19 +72,19 @@
             will-change: transform;
         }
         /* Spine divider line and static 3D depth shadows */
-        .page.--left { 
+        .page:nth-child(even) { 
             border-right: 1px solid rgba(0, 0, 0, 0.1) !important;
         }
-        .page.--left::before {
+        .page:nth-child(even)::before {
             content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: 50px;
             background: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.15) 100%);
             z-index: 10; pointer-events: none;
         }
         
-        .page.--right { 
+        .page:nth-child(odd) { 
             border-left: 1px solid rgba(0, 0, 0, 0.1) !important;
         }
-        .page.--right::before {
+        .page:nth-child(odd)::before {
             content: ""; position: absolute; top: 0; left: 0; bottom: 0; width: 50px;
             background: linear-gradient(to left, rgba(0,0,0,0) 0%, rgba(0,0,0,0.15) 100%);
             z-index: 10; pointer-events: none;
