@@ -634,8 +634,10 @@ function FlipbookModal({ magazine, pdfUrl: directPdfUrl, onClose }) {
                     const pageDiv = document.createElement('div');
                     pageDiv.className = 'page flex items-center justify-center bg-white';
                     
-                    // Make all pages "hard" to prevent 3D curling mesh and eliminate flickering
-                    pageDiv.setAttribute('data-density', 'hard');
+                    // Make the first and last pages "hard" covers so they don't fold and detach during opening/closing
+                    if (i === 1 || i === pdfDoc.numPages) {
+                        pageDiv.setAttribute('data-density', 'hard');
+                    }
                     
                     // Add a tiny loading spinner inside the empty page
                     pageDiv.innerHTML = '<div class="text-stone-300 animate-pulse text-xs">Loading page...</div>';
@@ -734,8 +736,8 @@ function FlipbookModal({ magazine, pdfUrl: directPdfUrl, onClose }) {
                     width: fitPageW,
                     height: fitPageH,
                     size: "fixed",
-                    maxShadowOpacity: 0.5,
-                    drawShadow: true,
+                    maxShadowOpacity: 0,
+                    drawShadow: false,
                     showCover: true,
                     usePortrait: isMobile,
                     mobileScrollSupport: false,
