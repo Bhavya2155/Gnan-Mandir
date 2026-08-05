@@ -71,12 +71,23 @@
             backface-visibility: hidden;
             will-change: transform;
         }
-        /* Spine divider line between the two pages */
+        /* Spine divider line and static 3D depth shadows */
         .page.--left { 
-            border-right: 2px solid rgba(0, 0, 0, 0.22) !important;
+            border-right: 1px solid rgba(0, 0, 0, 0.1) !important;
         }
+        .page.--left::before {
+            content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: 50px;
+            background: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.15) 100%);
+            z-index: 10; pointer-events: none;
+        }
+        
         .page.--right { 
-            border-left: 2px solid rgba(0, 0, 0, 0.22) !important;
+            border-left: 1px solid rgba(0, 0, 0, 0.1) !important;
+        }
+        .page.--right::before {
+            content: ""; position: absolute; top: 0; left: 0; bottom: 0; width: 50px;
+            background: linear-gradient(to left, rgba(0,0,0,0) 0%, rgba(0,0,0,0.15) 100%);
+            z-index: 10; pointer-events: none;
         }
         
         .page canvas, .page img { 
