@@ -67,7 +67,7 @@
             display: block;
             -webkit-transform-style: preserve-3d;
             transform-style: preserve-3d;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15); /* Static shadow that flips with the page */
+            /* No static box-shadow here to allow StPageFlip to draw real shadows */
         }
         /* Spine divider line and static 3D depth shadows */
         .page:nth-child(even) { 
@@ -94,6 +94,11 @@
             height: 100% !important; 
             margin: 0 !important;
             object-fit: fill;
+            /* Force hardware acceleration on the image to prevent Z-fighting with dynamic shadows */
+            -webkit-transform: translateZ(1px);
+            transform: translateZ(1px);
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
         }
 
         /* Disable text selection, image dragging, and content copying */
@@ -743,8 +748,8 @@ function FlipbookModal({ magazine, pdfUrl: directPdfUrl, onClose }) {
                     width: fitPageW,
                     height: fitPageH,
                     size: "fixed",
-                    maxShadowOpacity: 0, 
-                    drawShadow: false, // Turned off to prevent StPageFlip Z-fighting flicker
+                    maxShadowOpacity: 0.3, // Light opacity to look realistic without heavy GPU load
+                    drawShadow: true, // Restored real shadow
                     showCover: true,
                     usePortrait: isMobile,
                     mobileScrollSupport: false,
