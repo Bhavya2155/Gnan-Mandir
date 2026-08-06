@@ -95,11 +95,10 @@
             pointer-events: none;
         }
 
-        /* Unified 3D Context for the entire flipbook to prevent Z-fighting */
-        .flipbook-wrapper {
-            -webkit-transform: translateZ(0);
-            transform: translateZ(0);
-            will-change: transform;
+        /* Prevent hardware acceleration bugs with the dynamic shadow */
+        .st-page-flip, .st-page {
+            -webkit-transform-style: flat !important;
+            transform-style: flat !important;
         }
 
         /* Disable text selection, image dragging, and content copying */
@@ -740,6 +739,13 @@ function FlipbookModal({ magazine, pdfUrl: directPdfUrl, onClose }) {
                     }
                 }
 
+                // Apply precise dimensions to the container to prevent vertical jumping
+                if (flipbookContainerRef.current) {
+                    const bookTotalWidth = isMobile ? fitPageW : (fitPageW * 2);
+                    flipbookContainerRef.current.style.width = `${bookTotalWidth}px`;
+                    flipbookContainerRef.current.style.height = `${fitPageH}px`;
+                }
+
                 if (flipRef.current) {
                     try { flipRef.current.destroy(); } catch(e) {}
                     flipRef.current = null;
@@ -909,7 +915,7 @@ function FlipbookModal({ magazine, pdfUrl: directPdfUrl, onClose }) {
                     
                     <div 
                         ref={flipbookContainerRef} 
-                        className={`w-full h-full relative flipbook-wrapper ${loading || error ? 'hidden' : 'relative block shadow-2xl transition-transform duration-200'} ${zoomScale > 1 ? 'pointer-events-none' : ''}`}
+                        className={`relative flipbook-wrapper ${loading || error ? 'hidden' : 'block shadow-2xl transition-transform duration-200'} ${zoomScale > 1 ? 'pointer-events-none' : ''}`}
                         style={{ 
                             transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoomScale})`, 
                             transformOrigin: 'center center' 
