@@ -67,6 +67,7 @@
             display: block;
             -webkit-transform-style: preserve-3d;
             transform-style: preserve-3d;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15); /* Static shadow that flips with the page */
         }
         /* Spine divider line and static 3D depth shadows */
         .page:nth-child(even) { 
@@ -742,8 +743,8 @@ function FlipbookModal({ magazine, pdfUrl: directPdfUrl, onClose }) {
                     width: fitPageW,
                     height: fitPageH,
                     size: "fixed",
-                    maxShadowOpacity: 0.15, // Made very light to prevent heavy GPU flickering
-                    drawShadow: true,
+                    maxShadowOpacity: 0, 
+                    drawShadow: false, // Turned off to prevent StPageFlip Z-fighting flicker
                     showCover: true,
                     usePortrait: isMobile,
                     mobileScrollSupport: false,
