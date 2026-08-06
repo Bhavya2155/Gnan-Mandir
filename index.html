@@ -95,11 +95,7 @@
             pointer-events: none;
         }
 
-        /* Prevent hardware acceleration bugs with the dynamic shadow */
-        .st-page-flip, .st-page {
-            -webkit-transform-style: flat !important;
-            transform-style: flat !important;
-        }
+
 
         /* Disable text selection, image dragging, and content copying */
         * {
@@ -679,18 +675,15 @@ function FlipbookModal({ magazine, pdfUrl: directPdfUrl, onClose }) {
                     tempCanvas.height = viewport.height;
                     await page.render({ canvasContext: tempCanvas.getContext('2d'), viewport }).promise;
                     
-                    // Convert canvas to a static <img> — mobile GPUs handle
-                    // static images far better than live canvases during 3D rotation
-                    const img = new Image();
-                    img.src = tempCanvas.toDataURL('image/jpeg', 0.92);
-                    img.style.width = '100%';
-                    img.style.height = '100%';
-                    img.style.display = 'block';
+                    // Append the raw canvas directly.
+                    // Converting to JPEG causes massive CPU spikes during decompression,
+                    // which stalls the main thread and causes severe flickering during 3D flips!
+                    tempCanvas.style.width = '100%';
+                    tempCanvas.style.height = '100%';
+                    tempCanvas.style.display = 'block';
                     
-                    img.onload = () => {
-                        pageDiv.innerHTML = '';
-                        pageDiv.appendChild(img);
-                    };
+                    pageDiv.innerHTML = '';
+                    pageDiv.appendChild(tempCanvas);
 
                     // Thumbnail
                     const thumbCanvas = document.createElement('canvas');
