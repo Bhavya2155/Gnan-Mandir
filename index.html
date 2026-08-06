@@ -742,7 +742,7 @@ function FlipbookModal({ magazine, pdfUrl: directPdfUrl, onClose }) {
                     width: fitPageW,
                     height: fitPageH,
                     size: "fixed",
-                    maxShadowOpacity: 0.4,
+                    maxShadowOpacity: 0.15, // Made very light to prevent heavy GPU flickering
                     drawShadow: true,
                     showCover: true,
                     usePortrait: isMobile,
