@@ -65,9 +65,6 @@
             background-color: #ffffff; 
             overflow: hidden; 
             display: block;
-            -webkit-transform-style: preserve-3d;
-            transform-style: preserve-3d;
-            /* No static box-shadow here to allow StPageFlip to draw real shadows */
         }
         /* Spine divider line and static 3D depth shadows */
         .page:nth-child(even) { 
@@ -76,7 +73,7 @@
         .page:nth-child(even)::before {
             content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: 50px;
             background: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.15) 100%);
-            z-index: 10; pointer-events: none;
+            pointer-events: none;
         }
         
         .page:nth-child(odd) { 
@@ -85,7 +82,7 @@
         .page:nth-child(odd)::before {
             content: ""; position: absolute; top: 0; left: 0; bottom: 0; width: 50px;
             background: linear-gradient(to left, rgba(0,0,0,0) 0%, rgba(0,0,0,0.15) 100%);
-            z-index: 10; pointer-events: none;
+            pointer-events: none;
         }
         
         .page canvas, .page img { 
@@ -94,11 +91,15 @@
             height: 100% !important; 
             margin: 0 !important;
             object-fit: fill;
-            /* Force hardware acceleration on the image to prevent Z-fighting with dynamic shadows */
-            -webkit-transform: translateZ(1px);
-            transform: translateZ(1px);
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
+            background-color: #ffffff;
+            pointer-events: none;
+        }
+
+        /* Unified 3D Context for the entire flipbook to prevent Z-fighting */
+        .flipbook-wrapper {
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0);
+            will-change: transform;
         }
 
         /* Disable text selection, image dragging, and content copying */
@@ -664,8 +665,8 @@ function FlipbookModal({ magazine, pdfUrl: directPdfUrl, onClose }) {
                 setPageThumbnails(initialThumbs);
 
                 // Helper to render a specific page
-                // Use lower resolution on mobile to prevent GPU texture flickering
-                const renderScale = window.innerWidth < 768 ? 1.0 : 1.5;
+                // Reduce render scale slightly to prevent texture upload stuttering (flickering) during 3D animations
+                const renderScale = window.innerWidth < 768 ? 1.0 : 1.25;
                 
                 const renderPage = async (pageNum) => {
                     if (!isMounted) return;
@@ -908,7 +909,7 @@ function FlipbookModal({ magazine, pdfUrl: directPdfUrl, onClose }) {
                     
                     <div 
                         ref={flipbookContainerRef} 
-                        className={`${loading || error ? 'hidden' : 'relative block shadow-2xl transition-transform duration-200'} ${zoomScale > 1 ? 'pointer-events-none' : ''}`}
+                        className={`w-full h-full relative flipbook-wrapper ${loading || error ? 'hidden' : 'relative block shadow-2xl transition-transform duration-200'} ${zoomScale > 1 ? 'pointer-events-none' : ''}`}
                         style={{ 
                             transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoomScale})`, 
                             transformOrigin: 'center center' 
