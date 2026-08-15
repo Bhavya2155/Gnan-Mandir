@@ -65,6 +65,7 @@
             background-color: #ffffff; 
             overflow: hidden; 
             display: block;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
         }
         /* Removed borders and pseudo-elements on .page to prevent WebKit repainting stutters */
         
@@ -774,8 +775,8 @@ function FlipbookModal({ magazine, pdfUrl: directPdfUrl, onClose }) {
                     width: fitPageW,
                     height: fitPageH,
                     size: "fixed",
-                    maxShadowOpacity: 0.3, // Light opacity to look realistic without heavy GPU load
-                    drawShadow: true, // Restored real shadow
+                    maxShadowOpacity: 0.3,
+                    drawShadow: false, // Disabled to permanently stop hardware flickering
                     showCover: true,
                     usePortrait: isMobile,
                     mobileScrollSupport: false,
