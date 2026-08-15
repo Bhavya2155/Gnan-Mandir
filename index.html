@@ -656,11 +656,50 @@ function FlipbookModal({ magazine, pdfUrl: directPdfUrl, onClose }) {
                     const tempCanvas = document.createElement('canvas');
                     tempCanvas.width = viewport.width;
                     tempCanvas.height = viewport.height;
-                    await page.render({ canvasContext: tempCanvas.getContext('2d'), viewport }).promise;
+                    const ctx = tempCanvas.getContext('2d');
+                    await page.render({ canvasContext: ctx, viewport }).promise;
+                    
+                    // Draw photorealistic book lighting and shadows directly onto the canvas.
+                    // This creates a realistic "book" look without triggering CSS 3D flickering!
+                    const isLeftPage = pageNum % 2 === 0;
+                    
+                    // Spine fold inner shadow
+                    const spineGradient = ctx.createLinearGradient(
+                        isLeftPage ? tempCanvas.width : 0, 0, 
+                        isLeftPage ? tempCanvas.width - 80 : 80, 0
+                    );
+                    spineGradient.addColorStop(0, 'rgba(0, 0, 0, 0.4)');
+                    spineGradient.addColorStop(0.3, 'rgba(0, 0, 0, 0.1)');
+                    spineGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                    ctx.fillStyle = spineGradient;
+                    ctx.fillRect(
+                        isLeftPage ? tempCanvas.width - 80 : 0, 0, 
+                        80, tempCanvas.height
+                    );
+
+                    // Outer page edge (simulates the thickness of a stack of pages)
+                    const edgeGradient = ctx.createLinearGradient(
+                        isLeftPage ? 0 : tempCanvas.width, 0, 
+                        isLeftPage ? 15 : tempCanvas.width - 15, 0
+                    );
+                    edgeGradient.addColorStop(0, 'rgba(0, 0, 0, 0.2)');
+                    edgeGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                    ctx.fillStyle = edgeGradient;
+                    ctx.fillRect(
+                        isLeftPage ? 0 : tempCanvas.width - 15, 0, 
+                        15, tempCanvas.height
+                    );
+                    
+                    // Ambient vertical lighting (darker at top and bottom edges)
+                    const verticalGradient = ctx.createLinearGradient(0, 0, 0, tempCanvas.height);
+                    verticalGradient.addColorStop(0, 'rgba(0,0,0,0.1)');
+                    verticalGradient.addColorStop(0.05, 'rgba(0,0,0,0)');
+                    verticalGradient.addColorStop(0.95, 'rgba(0,0,0,0)');
+                    verticalGradient.addColorStop(1, 'rgba(0,0,0,0.1)');
+                    ctx.fillStyle = verticalGradient;
+                    ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
                     
                     // Append the raw canvas directly.
-                    // Converting to JPEG causes massive CPU spikes during decompression,
-                    // which stalls the main thread and causes severe flickering during 3D flips!
                     tempCanvas.style.width = '100%';
                     tempCanvas.style.height = '100%';
                     tempCanvas.style.display = 'block';
