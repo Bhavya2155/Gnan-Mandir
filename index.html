@@ -699,13 +699,17 @@ function FlipbookModal({ magazine, pdfUrl: directPdfUrl, onClose }) {
                     ctx.fillStyle = verticalGradient;
                     ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
                     
-                    // Append the raw canvas directly.
-                    tempCanvas.style.width = '100%';
-                    tempCanvas.style.height = '100%';
-                    tempCanvas.style.display = 'block';
+                    // Convert canvas to a static <img> so that StPageFlip can clone it for the backface.
+                    // (Cloning a <canvas> DOM node results in a blank image, causing white backfaces!)
+                    const img = new Image();
+                    // Use webp for extremely fast GPU upload to prevent flickering
+                    img.src = tempCanvas.toDataURL('image/webp', 0.9);
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.display = 'block';
                     
                     pageDiv.innerHTML = '';
-                    pageDiv.appendChild(tempCanvas);
+                    pageDiv.appendChild(img);
 
                     // Thumbnail
                     const thumbCanvas = document.createElement('canvas');
